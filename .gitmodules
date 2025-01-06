@@ -1,0 +1,6 @@
+[submodule "2048"]
+	path = 2048
+	url = https://github.com/mkilic20/2048.git
+[submodule "helm"]
+	path = helm
+	url = https://github.com/mkilic20/helm.git

@@ -1,0 +1,36 @@
+services:
+  game-2048:
+    build:
+      context: ./2048
+      dockerfile: Dockerfile
+    ports:
+      - "8085:85"
+      - "${API_PORT}:${API_PORT}"
+    restart: unless-stopped
+    container_name: 2048-game
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./2048/.env
+
+  db:
+    image: mysql:8.0
+    container_name: 2048-db
+    restart: unless-stopped
+    env_file:
+      - ./db/.env
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:
